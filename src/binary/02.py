@@ -4,25 +4,20 @@ from typing import List, Union
 from sklearn.naive_bayes import MultinomialNB
 
 def load_data() -> Union[List[int], List[int]]:
+  cwd = getcwd()
+
+  x = []
+  y = []
+
   try:
-    cwd = getcwd()
-
-    x = []
-    y = []
-
     file = open(cwd + '/src/binary/data/users_access.csv', 'rt')
     buffer = reader(file)
 
     buffer.__next__()
 
-    for acessou_home, acessou_como_funciona, acessou_contato, comprou in buffer:
-      x.append([
-        int(acessou_home),
-        int(acessou_como_funciona),
-        int(acessou_contato)
-      ])
-
-      y.append(int(comprou))
+    for home, how_it_works, contact, bought in buffer:
+      x.append([int(home), int(how_it_works), int(contact)])
+      y.append(int(bought))
 
     return x, y
   except:
