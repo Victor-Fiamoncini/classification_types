@@ -1,12 +1,26 @@
 from os import getcwd
 import pandas as pd
 
-file_path = getcwd() + '/src/multi_category/data/users.csv'
+file_path = getcwd() + '/src/categorical_variables/data/users.csv'
 
-data_frame = pd.read_csv(file_path)
+df = pd.read_csv(file_path)
 
-x = data_frame[['home', 'busca', 'logado']]
-y = data_frame['comprou']
+x_df = df[['home', 'busca', 'logado']]
+y_df = df['comprou']
 
-x_dummies = pd.get_dummies(x)
-y_dummies = y
+x_dummies_df = pd.get_dummies(x_df)
+y_dummies_df = y_df
+
+x = x_dummies_df.values
+y = y_dummies_df.values
+
+train_size = int(0.9 * len(y))
+test_size = len(y) - train_size
+
+x_train = x[:train_size]
+y_train = y[:train_size]
+
+x_test = x[-test_size:]
+y_test = y[-test_size:]
+
+print(train_size, test_size)
