@@ -38,31 +38,42 @@ print('Total 0s:', total_0s)
 print('Total 1s:', total_1s)
 print('Number if most frequent value:', max(Counter(y).values()))
 
-### Get predictions & hit rate
+### Get predictions & hit rate (train, test, validate)
 def fit_and_predict(model, x_train, y_train, x_test, y_test):
   model.fit(x_train, y_train)
 
   predictions = model.predict(x_test)
   hits = (predictions == y_test)
-
   total_hits = sum(hits)
   total_elements = len(x_test)
-
   hit_rate = 100 * total_hits / total_elements
 
   print(type(model).__name__, 'hit rate:', hit_rate)
 
   return hit_rate
 
-model = MultinomialNB()
-multinomial_hit_rate = fit_and_predict(model, x_train, y_train, x_test, y_test)
+multinomial_model = MultinomialNB()
+multinomial_hit_rate = fit_and_predict(multinomial_model, x_train, y_train, x_test, y_test)
 
-model = AdaBoostClassifier()
-ada_boost_hit_rate = fit_and_predict(model, x_train, y_train, x_test, y_test)
+ada_boost_model = AdaBoostClassifier()
+ada_boost_hit_rate = fit_and_predict(ada_boost_model, x_train, y_train, x_test, y_test)
 
-### Get most frequent Y (dummy strategy)
+if multinomial_hit_rate > ada_boost_hit_rate:
+  winner_model = multinomial_model
+else:
+  winner_model = ada_boost_model
+
+winner_predictions = winner_model.predict(x_validation)
+hits = (winner_predictions == y_validation)
+total_hits = sum(hits)
+total_elements = len(x_validation)
+hit_rate = 100 * total_hits / total_elements
+
+print('Winner', type(winner_model).__name__, 'hit rate:', hit_rate)
+
+### Get most frequent Y (train, test with dummy strategy)
 dummy_model = DummyClassifier(strategy='most_frequent')
-dummy_model.fit(x_train, y_train)
-dummy_hit_rate = dummy_model.score(x_test, y_test) * 100
+dummy_model.fit(x_validation, y_validation)
+dummy_hit_rate = dummy_model.score(x_validation, y_validation) * 100
 
 print('DummyClassifier hit hate: %f' % dummy_hit_rate)
