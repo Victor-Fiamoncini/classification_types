@@ -1,7 +1,7 @@
 from os import getcwd
 from sklearn.dummy import DummyClassifier
 from sklearn.ensemble import AdaBoostClassifier
-from sklearn.multiclass import OneVsRestClassifier
+from sklearn.multiclass import OneVsRestClassifier, OneVsOneClassifier
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.svm import LinearSVC
 import pandas as pd
@@ -31,6 +31,13 @@ y_test = y[train_size:train_size + test_size]
 
 x_validation = x[train_size + test_size:]
 y_validation = y[train_size + test_size:]
+
+### Get most frequent Y (train, test with dummy strategy)
+dummy_model = DummyClassifier(strategy='most_frequent')
+dummy_model.fit(x_validation, y_validation)
+dummy_hit_rate = dummy_model.score(x_validation, y_validation) * 100
+
+print('DummyClassifier hit hate: %f' % dummy_hit_rate)
 
 ### Get predictions & hit rate (train, test, validate)
 def fit_and_predict(model):
@@ -65,6 +72,13 @@ one_vs_rest_linear_svc_model = OneVsRestClassifier(
 one_vs_rest_linear_svc_hit_rate = fit_and_predict(one_vs_rest_linear_svc_model)
 results[one_vs_rest_linear_svc_hit_rate] = one_vs_rest_linear_svc_model
 
+# One vs One strategy (with LinearSVC)
+one_vs_one_linear_svc_model = OneVsOneClassifier(
+  LinearSVC(random_state=0, max_iter=10000)
+)
+one_vs_one_linear_svc_hit_rate = fit_and_predict(one_vs_one_linear_svc_model)
+results[one_vs_one_linear_svc_hit_rate] = one_vs_one_linear_svc_model
+
 greater_hit_rate = max(results)
 winner_model = results[greater_hit_rate]
 
@@ -75,13 +89,4 @@ total_elements = len(x_validation)
 hit_rate = 100 * total_hits / total_elements
 
 print('Winner', type(winner_model).__name__, 'hit rate:', hit_rate)
-
-### Get most frequent Y (train, test with dummy strategy)
-dummy_model = DummyClassifier(strategy='most_frequent')
-dummy_model.fit(x_validation, y_validation)
-dummy_hit_rate = dummy_model.score(x_validation, y_validation) * 100
-
-print('DummyClassifier hit hate: %f' % dummy_hit_rate)
-
-# One vs Rest strategy with LinearSVC
 
