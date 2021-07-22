@@ -9,6 +9,8 @@ import nltk
 import numpy as np
 import pandas as pd
 
+nltk.download('punkt')
+
 ### Getting data & converting emails to vectors
 file_path = getcwd() + '/src/text_processing/data/emails.csv'
 classifications = pd.read_csv(file_path, encoding='utf-8')
