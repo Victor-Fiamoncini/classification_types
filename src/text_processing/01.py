@@ -5,19 +5,28 @@ from sklearn.model_selection import cross_val_score
 from sklearn.multiclass import OneVsOneClassifier, OneVsRestClassifier
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.svm import LinearSVC
+import nltk
 import numpy as np
 import pandas as pd
 
 ### Getting data & converting emails to vectors
 file_path = getcwd() + '/src/text_processing/data/emails.csv'
-classifications = pd.read_csv(file_path)
+classifications = pd.read_csv(file_path, encoding='utf-8')
 
 raw_emails = classifications['email']
 splitted_emails = raw_emails.str.lower().str.split(' ')
 
 words = set()
+stopwords = nltk.corpus.stopwords.words('portuguese')
+stemmer = nltk.stem.RSLPStemmer()
+
+# Removing stopwords and stem & update a word dict/set
 for word_list in splitted_emails:
-  words.update(word_list)
+  non_stopwords_without_suffix = [
+    stemmer.stem(word)
+    for word in word_list if word not in stopwords and len(word) > 0
+  ]
+  words.update(non_stopwords_without_suffix)
 
 words_total = len(words)
 words_tuples = zip(words, range(words_total))
@@ -27,9 +36,12 @@ def text_to_vector(text, translator):
   vector_phrase = [0] * len(translator)
 
   for word in text:
-    if word in translator:
-      word_occurrence_index = translator[word]
-      vector_phrase[word_occurrence_index] += 1
+    if len(word) > 0:
+      word_without_suffix = stemmer.stem(word)
+
+      if word_without_suffix in translator:
+        word_occurrence_index = translator[word_without_suffix]
+        vector_phrase[word_occurrence_index] += 1
 
   return vector_phrase
 
