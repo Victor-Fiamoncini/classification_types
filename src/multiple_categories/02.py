@@ -36,6 +36,8 @@ def fit_and_predict(model):
 
   print(type(model).__name__, 'score mean:', score_mean)
 
+  return score_mean
+
 results = {}
 
 # K-Fold strategy (with MultinomialNB)
