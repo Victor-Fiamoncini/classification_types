@@ -1,3 +1,7 @@
+import nltk
+import numpy as np
+import pandas as pd
+from nltk.tokenize import word_tokenize
 from os import getcwd
 from sklearn.dummy import DummyClassifier
 from sklearn.ensemble import AdaBoostClassifier
@@ -5,28 +9,28 @@ from sklearn.model_selection import cross_val_score
 from sklearn.multiclass import OneVsOneClassifier, OneVsRestClassifier
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.svm import LinearSVC
-import nltk
-import numpy as np
-import pandas as pd
-
-nltk.download('punkt')
 
 ### Getting data & converting emails to vectors
+language = "portuguese"
 file_path = getcwd() + '/src/text_processing/data/emails.csv'
 classifications = pd.read_csv(file_path, encoding='utf-8')
 
 raw_emails = classifications['email']
-splitted_emails = raw_emails.str.lower().str.split(' ')
+lowercase_emails = raw_emails.str.lower()
+tokenized_emails = [
+  word_tokenize(email, language=language)
+  for email in lowercase_emails
+]
 
 words = set()
-stopwords = nltk.corpus.stopwords.words('portuguese')
+stopwords = nltk.corpus.stopwords.words(language)
 stemmer = nltk.stem.RSLPStemmer()
 
 # Removing stopwords and stem & update a word dict/set
-for word_list in splitted_emails:
+for word_list in tokenized_emails:
   non_stopwords_without_suffix = [
     stemmer.stem(word)
-    for word in word_list if word not in stopwords and len(word) > 0
+    for word in word_list if word not in stopwords and len(word) > 2
   ]
   words.update(non_stopwords_without_suffix)
 
@@ -47,7 +51,7 @@ def text_to_vector(text, translator):
 
   return vector_phrase
 
-text_vectors = [text_to_vector(email, translator) for email in splitted_emails]
+text_vectors = [text_to_vector(email, translator) for email in tokenized_emails]
 
 ### Train, Test & Validate data
 def fit_and_predict(model, x_train, y_train):
