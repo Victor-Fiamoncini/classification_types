@@ -73,7 +73,7 @@ print('Winner', type(winner_model).__name__, 'hit rate:', hit_rate)
 
 ### Get most frequent Y (train, test with dummy strategy)
 dummy_model = DummyClassifier(strategy='most_frequent')
-dummy_model.fit(x_validation, y_validation)
-dummy_hit_rate = dummy_model.score(x_validation, y_validation) * 100
+dummy_model.fit(x_train, y_train)
+dummy_hit_rate = dummy_model.score(x_test, y_test) * 100
 
 print('DummyClassifier hit hate: %f' % dummy_hit_rate)
