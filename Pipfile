@@ -8,6 +8,8 @@ sklearn = "*"
 nltk = "*"
 pandas = "*"
 numpy = "*"
+wordcloud = "*"
+matplotlib = "*"
 
 [dev-packages]
 
