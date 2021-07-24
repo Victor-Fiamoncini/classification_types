@@ -10,6 +10,7 @@ pandas = "*"
 numpy = "*"
 wordcloud = "*"
 matplotlib = "*"
+seaborn = "*"
 
 [dev-packages]
 
