@@ -11,6 +11,7 @@ numpy = "*"
 wordcloud = "*"
 matplotlib = "*"
 seaborn = "*"
+unidecode = "*"
 
 [dev-packages]
 ipykernel = "*"
